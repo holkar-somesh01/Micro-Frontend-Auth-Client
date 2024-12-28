@@ -1,31 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { authApi, AuthResponse, IUser } from "./authApi";
+import { authApi, AuthResponse } from "./authApi";
 
-// Define the user type
 interface User {
   id: string;
   name: string;
   email: string;
   mobile: string;
-  hero?: string; // Made optional to align with `authApi`
+  profile?: string;
 }
 
-// Define the initial state type
 export interface AuthState {
   user: User | null;
 }
 
-// Get the initial user from localStorage
+
 const initialUser = localStorage.getItem("user")
   ? (JSON.parse(localStorage.getItem("user") as string) as User)
   : null;
 
-// Define the initial state
+
 const initialState: AuthState = {
   user: initialUser,
 };
 
-// Create the slice
+
 const authSlice = createSlice({
   name: "authSlice",
   initialState,
@@ -37,26 +35,23 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) =>
     builder
-
-      .addMatcher(authApi.endpoints.loginUser.matchFulfilled, (state, main) => {
-        const payload = main.payload as AuthResponse
-        state.user = payload.user as IUser;
-        localStorage.setItem("user", JSON.stringify(payload)); // Persist user in localStorage
-
+      .addMatcher(authApi.endpoints.loginUser.matchFulfilled, (state, action) => {
+        const payload = action.payload as AuthResponse;
+        if (payload.user) {
+          state.user = payload.user;
+          localStorage.setItem("user", JSON.stringify(payload.user));
+        }
       })
-
       .addMatcher(authApi.endpoints.registerUser.matchFulfilled, (state, { payload }) => {
         if (payload?.user) {
           state.user = payload.user;
-          localStorage.setItem("user", JSON.stringify(payload.user)); // Persist user in localStorage
+          localStorage.setItem("user", JSON.stringify(payload.user));
         }
       })
-
       .addMatcher(authApi.endpoints.logoutUser.matchFulfilled, (state) => {
         state.user = null;
         localStorage.removeItem("user");
       })
-
       .addMatcher(authApi.endpoints.logoutAdmin.matchFulfilled, (state) => {
         state.user = null;
         localStorage.removeItem("user");

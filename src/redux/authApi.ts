@@ -23,11 +23,12 @@ export interface IUser {
   mobile: string;
   profile?: string;
   role?: string;
+  token: string;
 }
 
 export interface AuthResponse {
   message: string;
-  token?: string;
+  // token?: string;
   user?: IUser;
 }
 interface GenericResponse<T> {
@@ -38,6 +39,7 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://micro-services-auth-server.vercel.app/api/auth",
+    // baseUrl: "http://localhost:3000/api/auth",
     credentials: "include",
   }),
   tagTypes: ["Auth"],
