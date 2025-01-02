@@ -9,6 +9,7 @@ import RegisterForm from "./page/Register"
 const App = () => {
   return (
     <>
+
       <Routes>
         <Route path='/' element={<Login />} />
         <Route path='/register' element={<RegisterForm />} />
